@@ -1,11 +1,27 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AlertStatusPanel from '@/components/AlertStatusPanel'
 import MapVisualization from '@/components/MapVisualization'
 import DataWidget from '@/components/DataWidget'
 
 export default function Dashboard() {
   const [selectedAlert, setSelectedAlert] = useState(null)
+
+  
+
+  async function call() {
+    await fetch("/api/notify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: "⚠️ Coastal Alert",
+        body: "High tide expected in your area!"
+      }),
+    });
+  }
+
+  
+
 
   return (
     <div className="space-y-6">
@@ -14,8 +30,11 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
         <div className="mt-4 sm:mt-0 flex items-center space-x-4">
           <span className="text-sm text-gray-600">Last updated: 2 min ago</span>
-          <button className="px-4 py-2 bg-info text-white rounded-lg hover:bg-blue-700 transition">
-            Refresh Data
+          <button 
+            onClick={call}
+            className="px-4 py-2 bg-info text-white rounded-lg hover:bg-blue-700 transition"
+          >
+            Send Alert
           </button>
         </div>
       </div>
@@ -25,34 +44,13 @@ export default function Dashboard() {
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Map Visualization - Takes 2 columns */}
         <div className="xl:col-span-2">
           <MapVisualization selectedAlert={selectedAlert} />
         </div>
-
-        {/* Data Widgets - Right Column */}
         <div className="space-y-6">
-          <DataWidget
-            title="Tide Level"
-            value="2.4m"
-            change="+0.3m"
-            trend="up"
-            type="gauge"
-          />
-          <DataWidget
-            title="Wind Speed"
-            value="45 km/h"
-            change="+12 km/h"
-            trend="up"
-            type="chart"
-          />
-          <DataWidget
-            title="Water Quality"
-            value="Good"
-            change="Stable"
-            trend="stable"
-            type="status"
-          />
+          <DataWidget title="Tide Level" value="2.4m" change="+0.3m" trend="up" type="gauge" />
+          <DataWidget title="Wind Speed" value="45 km/h" change="+12 km/h" trend="up" type="chart" />
+          <DataWidget title="Water Quality" value="Good" change="Stable" trend="stable" type="status" />
         </div>
       </div>
 
