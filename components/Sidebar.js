@@ -10,7 +10,7 @@ import {
   Map,
   Users,
   Settings,
-  HelpCircle,
+  UserCircle,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react'
@@ -30,8 +30,9 @@ export default function Sidebar() {
 
   const secondaryItems = [
     { icon: Settings, label: 'Settings', href: '/settings' },
-    { icon: HelpCircle, label: 'Help & Support', href: '/help' },
+    { icon: UserCircle, label: 'About', href: '/about' },
   ]
+
 
   return (
     <aside className={`hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 transition-all duration-300 ${
@@ -62,7 +63,11 @@ export default function Sidebar() {
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                <Icon className={`h-5 w-5 ${collapsed ? 'mx-auto' : 'mr-3'}`} />
+                <Icon
+                  className={`shrink-0 transition-all duration-300 ${
+                    collapsed ? 'mx-auto h-5 w-5' : 'mr-3 h-5 w-5'
+                  }`}
+                />
                 {!collapsed && <span>{item.label}</span>}
               </Link>
             )
@@ -76,14 +81,23 @@ export default function Sidebar() {
         <div className="space-y-1">
           {secondaryItems.map((item) => {
             const Icon = item.icon
-            
+            const isActive = pathname === item.href
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition"
+                className={`flex items-center px-3 py-2 rounded-lg transition ${
+                  isActive
+                    ? 'bg-info text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
               >
-                <Icon className={`h-5 w-5 ${collapsed ? 'mx-auto' : 'mr-3'}`} />
+                <Icon
+                  className={`shrink-0 transition-all duration-300 ${
+                    collapsed ? 'mx-auto h-6 w-6' : 'mr-3 h-6 w-6'
+                  }`}
+                />
                 {!collapsed && <span>{item.label}</span>}
               </Link>
             )
