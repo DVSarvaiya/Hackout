@@ -1,2 +1,29 @@
 @import "tailwindcss";
 
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+}
+
+@layer components {
+  .alert-critical {
+    @apply bg-red-50 border-red-500 text-red-700;
+  }
+  
+  .alert-warning {
+    @apply bg-orange-50 border-orange-500 text-orange-700;
+  }
+  
+  .alert-caution {
+    @apply bg-yellow-50 border-yellow-500 text-yellow-700;
+  }
+  
+  .alert-info {
+    @apply bg-blue-50 border-blue-500 text-blue-700;
+  }
+  
+  .widget-card {
+    @apply bg-white rounded-lg shadow-md p-6 border border-gray-200;
+  }
+}
