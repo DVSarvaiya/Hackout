@@ -59,13 +59,13 @@ export default function Sidebar() {
                 href={item.href}
                 className={`flex items-center px-3 py-2 rounded-lg transition ${
                   isActive
-                    ? 'bg-info text-white'
+                    ? 'bg-info text-white bg-blue-300'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
                 <Icon
                   className={`shrink-0 transition-all duration-300 ${
-                    collapsed ? 'mx-auto h-5 w-5' : 'mr-3 h-5 w-5'
+                    collapsed ? 'justify-center h-5 w-5' : 'mr-3 h-5 w-5'
                   }`}
                 />
                 {!collapsed && <span>{item.label}</span>}
@@ -89,13 +89,13 @@ export default function Sidebar() {
                 href={item.href}
                 className={`flex items-center px-3 py-2 rounded-lg transition ${
                   isActive
-                    ? 'bg-info text-white'
+                    ? 'bg-info text-white bg-blue-300'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
                 <Icon
                   className={`shrink-0 transition-all duration-300 ${
-                    collapsed ? 'mx-auto h-6 w-6' : 'mr-3 h-6 w-6'
+                    collapsed ? 'justify-center h-5 w-5' : 'mr-3 h-5 w-5'
                   }`}
                 />
                 {!collapsed && <span>{item.label}</span>}

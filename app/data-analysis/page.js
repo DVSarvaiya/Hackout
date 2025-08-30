@@ -90,7 +90,7 @@ export default function DataAnalysisPage() {
           <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition" onClick={() => window.location.reload()}>
             <RefreshCw className="h-4 w-4" />
           </button>
-          <button className="px-4 py-2 bg-info text-white rounded-lg hover:bg-blue-700 transition flex items-center">
+          <button className="px-4 py-2 bg-info text-white rounded-lg bg-blue-700 transition flex items-center">
             <Download className="h-4 w-4 mr-2" />
             Export Data
           </button>
@@ -106,7 +106,7 @@ export default function DataAnalysisPage() {
               onClick={() => setDataType(type)}
               className={`px-4 py-2 rounded-lg font-medium transition ${
                 dataType === type
-                  ? 'bg-info text-white'
+                  ? 'bg-info text-white bg-blue-300'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
