@@ -32,7 +32,6 @@ export default function Header() {
             {/* System Status Indicator */}
             <div className="hidden sm:flex items-center">
               <div className="w-2 h-2 bg-success rounded-full animate-pulse mr-2"></div>
-              <span className="text-sm text-gray-600">System Online</span>
             </div>
 
             {/* Notifications */}
@@ -75,7 +74,7 @@ export default function Header() {
             </button>
 
             {/* Emergency Button */}
-            <button className="ml-2 px-4 py-2 bg-danger text-white rounded-lg hover:bg-red-700 transition font-medium">
+            <button className="ml-2 px-4 py-2 text-white rounded-lg  bg-red-700 transition font-medium">
               Emergency
             </button>
           </div>
