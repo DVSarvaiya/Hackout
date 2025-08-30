@@ -1,16 +1,17 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import {
+  LineChart, Line, BarChart, Bar,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts'
 import { Download, Calendar, RefreshCw, Maximize2 } from 'lucide-react'
 
 export default function DataAnalysisPage() {
   const [timeRange, setTimeRange] = useState('7d')
-  const [dataType, setDataType] = useState('tide')
   const [tideData, setTideData] = useState([])
   const [windData, setWindData] = useState([])
   const [tempData, setTempData] = useState([])
 
-  // Helper to calculate start & end dates based on timeRange
   const getDateRange = () => {
     const end = new Date()
     let start = new Date()
@@ -27,12 +28,10 @@ export default function DataAnalysisPage() {
     const fetchData = async () => {
       const { start_date, end_date } = getDateRange()
       try {
-        // Tide data
         const tideRes = await fetch(
           `https://marine-api.open-meteo.com/v1/marine?latitude=20&longitude=70&hourly=wave_height&start_date=${start_date}&end_date=${end_date}`
         )
         const tideJson = await tideRes.json()
-        console.log(tideJson.hourly.wave_height)
         const tideHourly = tideJson.hourly?.time
           ? tideJson.hourly.time.map((time, idx) => ({
               time: new Date(time).toLocaleString('en-US', { hour: 'numeric', hour12: true }),
@@ -41,7 +40,6 @@ export default function DataAnalysisPage() {
           : []
         setTideData(tideHourly)
 
-        // Wind data (use forecast endpoint)
         const windRes = await fetch(
           `https://api.open-meteo.com/v1/forecast?latitude=22.3&longitude=70.8&hourly=windspeed_10m,winddirection_10m&start_date=${start_date}&end_date=${end_date}`
         )
@@ -55,7 +53,6 @@ export default function DataAnalysisPage() {
           : []
         setWindData(windHourly)
 
-        // Temperature data
         const tempRes = await fetch(
           `https://api.open-meteo.com/v1/forecast?latitude=22.3&longitude=70.8&hourly=temperature_2m&start_date=${start_date}&end_date=${end_date}`
         )
@@ -87,7 +84,10 @@ export default function DataAnalysisPage() {
              timeRange === '7d' ? 'Last 7 Days' :
              timeRange === '30d' ? 'Last 30 Days' : 'Custom'}
           </button>
-          <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition" onClick={() => window.location.reload()}>
+          <button
+            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+            onClick={() => window.location.reload()}
+          >
             <RefreshCw className="h-4 w-4" />
           </button>
           <button className="px-4 py-2 bg-info text-white rounded-lg bg-blue-700 transition flex items-center">
@@ -97,95 +97,64 @@ export default function DataAnalysisPage() {
         </div>
       </div>
 
-      {/* Data Type Selector */}
-      <div className="widget-card">
-        <div className="flex flex-wrap gap-2">
-          {['tide', 'wind', 'temperature'].map((type) => (
-            <button
-              key={type}
-              onClick={() => setDataType(type)}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                dataType === type
-                  ? 'bg-info text-white bg-blue-300'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {type.charAt(0).toUpperCase() + type.slice(1)} Data
-            </button>
-          ))}
+      {/* Chart Blocks */}
+      <div className="flex flex-col gap-10">
+        {/* Tide Levels */}
+        <div className="widget-card w-[60rem] h-[35rem] mx-auto">
+          <div className="bg-blue-100 px-4 py-2 rounded-t-md flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold text-blue-800">Tide Data</h3>
+          </div>
+          <div className="h-[30rem]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={tideData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="time" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="level" stroke="#3182CE" strokeWidth={2} name="Tide Level (m)" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-      </div>
 
-      {/* Main Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {dataType === 'tide' && (
-          <div className="widget-card">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Tide Levels</h3>
-              <button className="p-1 hover:bg-gray-100 rounded">
-                <Maximize2 className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={tideData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="level" stroke="#3182CE" strokeWidth={2} name="Tide Level (m)" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+        {/* Wind */}
+        <div className="widget-card w-[60rem] h-[35rem] mx-auto">
+          <div className="bg-cyan-100 px-4 py-2 rounded-t-md flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold text-cyan-800">Wind Data</h3>
           </div>
-        )}
+          <div className="h-[30rem]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={windData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="day" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="speed" fill="#00B4D8" name="Wind Speed (km/h)" barSize={30} radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
 
-        {dataType === 'wind' && (
-          <div className="widget-card">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Wind Speed Analysis</h3>
-              <button className="p-1 hover:bg-gray-100 rounded">
-                <Maximize2 className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={windData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="speed" fill="#FF8C00" name="Wind Speed (km/h)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+        {/* Temperature */}
+        <div className="widget-card w-[60rem] h-[35rem] mx-auto">
+          <div className="bg-orange-100 px-4 py-2 rounded-t-md flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold text-orange-800">Temperature Data</h3>
           </div>
-        )}
-
-        {dataType === 'temperature' && (
-          <div className="widget-card">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Temperature Analysis</h3>
-              <button className="p-1 hover:bg-gray-100 rounded">
-                <Maximize2 className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={tempData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="temp" stroke="#FF4500" strokeWidth={2} name="Temperature (°C)" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+          <div className="h-[30rem]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={tempData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="time" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="temp" stroke="#FF4500" strokeWidth={2} name="Temperature (°C)" />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
-        )}
+        </div>
       </div>
     </div>
   )

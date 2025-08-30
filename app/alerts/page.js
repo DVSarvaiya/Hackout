@@ -64,7 +64,7 @@ export default function AlertsPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
         <h1 className="text-3xl font-bold text-gray-900">Alert Management Center</h1>
         <div className="mt-4 sm:mt-0 flex items-center space-x-4">
-          <button className="px-4 py-2 bg-info text-white rounded-lg hover:bg-blue-700 transition flex items-center">
+          <button className="px-4 py-2 bg-info text-white rounded-lg bg-blue-700 transition flex items-center">
             <Bell className="h-4 w-4 mr-2" />
             Subscribe
           </button>

@@ -18,11 +18,11 @@ export default function AlertCard({ alert, onAcknowledge, onShare, onViewDetails
   const getPriorityBadge = (priority) => {
     switch (priority) {
       case 'high':
-        return 'bg-danger text-white'
+        return 'bg-danger text-black'
       case 'medium':
-        return 'bg-warning text-white'
+        return 'bg-warning text-black'
       case 'low':
-        return 'bg-info text-white'
+        return 'bg-info text-black'
       default:
         return 'bg-gray-500 text-white'
     }
