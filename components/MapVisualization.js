@@ -9,14 +9,14 @@ import {
   Polyline,
 } from "react-leaflet";
 import {
-  Maximize2,
   Navigation,
   ZoomIn,
   ZoomOut,
-  MapPin,
   AlertCircle,
   Waves,
   Radio,
+  Wind,
+  Droplets,
 } from "lucide-react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -24,16 +24,16 @@ import "leaflet/dist/leaflet.css";
 // Fix for default markers in Next.js
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "/leaflet/marker-icon-2x.png",
-  iconUrl: "/leaflet/marker-icon.png",
-  shadowUrl: "/leaflet/marker-shadow.png",
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
 // Custom icon creation function
-const createCustomIcon = (color, type) => {
+const createCustomIcon = (color) => {
   const svgIcon = `
     <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="15" cy="15" r="10" fill="${color}" stroke="white" stroke-width="2"/>
+          <circle cx="15" cy="15" r="10" fill="${color}" stroke="white" stroke-width="2"/>
       <circle cx="15" cy="15" r="3" fill="white"/>
     </svg>
   `;
@@ -47,10 +47,9 @@ const createCustomIcon = (color, type) => {
   });
 };
 
-export default function MapVisualization({ selectedAlert, selectedLayer }) {
+export default function MapVisualization({ selectedAlert, selectedLayer, coords }) {
   const [map, setMap] = useState(null);
-  const [center, setCenter] = useState([22.5726, 88.3639]); // Kolkata coastal area
-  const [zoom, setZoom] = useState(10);
+  const center = [coords?.lat || 22.5726, coords?.lon || 88.3639]; // Default to Kolkata coastal area
 
   // Sample sensor locations around coastal areas
   const sensorLocations = [
@@ -166,7 +165,7 @@ export default function MapVisualization({ selectedAlert, selectedLayer }) {
           height: 100%;
           width: 100%;
           background: #e0f2fe;
-          border-radius: 0.5rem; /* Match the parent's border radius */
+          border-radius: 0.5rem;
         }
         .custom-marker {
           background: transparent;
@@ -180,7 +179,6 @@ export default function MapVisualization({ selectedAlert, selectedLayer }) {
           margin: 12px;
           font-size: 14px;
         }
-        /* Hide leaflet attribution in corners to maintain rounded look */
         .leaflet-control-attribution {
           border-radius: 0 0 0.5rem 0;
         }
@@ -192,9 +190,9 @@ export default function MapVisualization({ selectedAlert, selectedLayer }) {
 
       <MapContainer
         center={center}
-        zoom={zoom}
+        zoom={10}
         className="h-full w-full"
-        whenCreated={setMap}
+        ref={setMap}
         zoomControl={false}
       >
         <TileLayer
@@ -259,8 +257,7 @@ export default function MapVisualization({ selectedAlert, selectedLayer }) {
                 key={sensor.id}
                 position={sensor.position}
                 icon={createCustomIcon(
-                  getMarkerColor(sensor.status),
-                  sensor.type
+                  getMarkerColor(sensor.status)
                 )}
               >
                 <Popup>
@@ -291,7 +288,7 @@ export default function MapVisualization({ selectedAlert, selectedLayer }) {
                         Last updated: 2 minutes ago
                       </p>
                     </div>
-                  </div>
+                    </div>
                 </Popup>
               </Marker>
             ))}
@@ -385,7 +382,7 @@ export default function MapVisualization({ selectedAlert, selectedLayer }) {
               <span className="text-xs text-gray-600">Wave Height: 2.4m</span>
             </div>
             <div className="flex items-center gap-2">
-              <Droplet className="h-4 w-4 text-blue-500" />
+              <Droplets className="h-4 w-4 text-blue-500" />
               <span className="text-xs text-gray-600">Humidity: 78%</span>
             </div>
           </div>
