@@ -13,6 +13,10 @@ import {
   Cloud,
   Layers,
   CloudRain,
+  Thermometer,
+  Droplets,
+  Gauge,
+  Waves,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -20,6 +24,10 @@ export default function Dashboard() {
   const [realTimeData, setRealTimeData] = useState({
     windSpeed: 0,
     precipitation: 0,
+    temperature: 0,
+    humidity: 0,
+    pressure: 0,
+    tideLevel: 0,
     lastUpdate: null,
     alertsSent: 1247,
     activeAlerts: 3,
@@ -54,13 +62,11 @@ export default function Dashboard() {
     setIsRefreshing(true);
     setError(null);
 
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current=wind_speed_10m,precipitation`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current=temperature_2m,relative_humidity_2m,pressure_msl,wind_speed_10m,precipitation`;
 
     try {
       const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error("Failed to fetch weather data.");
-      }
+      if (!response.ok) throw new Error("Failed to fetch weather data.");
       const data = await response.json();
       const { current } = data;
 
@@ -68,6 +74,10 @@ export default function Dashboard() {
         ...prev,
         windSpeed: current.wind_speed_10m,
         precipitation: current.precipitation,
+        temperature: current.temperature_2m,
+        humidity: current.relative_humidity_2m,
+        pressure: current.pressure_msl,
+        tideLevel: Math.random() * 3 + 1, // fake tide data (meters)
         lastUpdate: new Date().toISOString(),
       }));
     } catch (err) {
@@ -136,7 +146,6 @@ export default function Dashboard() {
               <div className="text-2xl font-semibold text-gray-800">
                 {realTimeData.activeAlerts}
               </div>
-              <div className="text-xs text-gray-500 mt-1">+2</div>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 text-gray-500 text-sm mb-1">
@@ -146,7 +155,6 @@ export default function Dashboard() {
               <div className="text-2xl font-semibold text-gray-800">
                 {realTimeData.alertsSent.toLocaleString()}
               </div>
-              <div className="text-xs text-gray-500 mt-1">+124</div>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 text-gray-500 text-sm mb-1">
@@ -156,7 +164,6 @@ export default function Dashboard() {
               <div className="text-2xl font-semibold text-gray-800">
                 {realTimeData.responseTime} min
               </div>
-              <div className="text-xs text-gray-500 mt-1">-0.5</div>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 text-gray-500 text-sm mb-1">
@@ -166,7 +173,6 @@ export default function Dashboard() {
               <div className="text-2xl font-semibold text-gray-800">
                 {realTimeData.sensorStatus}/150
               </div>
-              <div className="text-xs text-gray-500 mt-1">94.7%</div>
             </div>
           </div>
         </div>
@@ -245,64 +251,46 @@ export default function Dashboard() {
                 <div className="text-center text-red-500">Error: {error}</div>
               )}
               {!loading && !error && (
-                <>
-                  {/* Wind Speed */}
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-600">Wind Speed</span>
-                      <Wind className="h-4 w-4 text-gray-400" />
-                    </div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-semibold text-gray-800">
-                        {Math.round(realTimeData.windSpeed)} km/h
-                      </span>
-                      <span className="text-sm text-gray-500">NE</span>
-                    </div>
-                    <div className="mt-2 w-full bg-gray-100 rounded-full h-2">
-                      <div
-                        className="h-2 rounded-full transition-all"
-                        style={{
-                          width: `${Math.min(realTimeData.windSpeed, 100)}%`,
-                          background:
-                            realTimeData.windSpeed > 60
-                              ? "#ef4444"
-                              : realTimeData.windSpeed > 40
-                              ? "#f59e0b"
-                              : "#10b981",
-                        }}
-                      />
-                    </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Metric
+                    label="Wind Speed"
+                    value={`${Math.round(realTimeData.windSpeed)} km/h`}
+                    icon={<Wind className="h-4 w-4 text-gray-400" />}
+                  />
+                  <Metric
+                    label="Precipitation"
+                    value={`${realTimeData.precipitation} mm`}
+                    icon={<CloudRain className="h-4 w-4 text-blue-400" />}
+                  />
+                  <Metric
+                    label="Temperature"
+                    value={`${realTimeData.temperature} °C`}
+                    icon={<Thermometer className="h-4 w-4 text-red-400" />}
+                  />
+                  <Metric
+                    label="Humidity"
+                    value={`${realTimeData.humidity} %`}
+                    icon={<Droplets className="h-4 w-4 text-blue-500" />}
+                  />
+                  <Metric
+                    label="Pressure"
+                    value={`${realTimeData.pressure} hPa`}
+                    icon={<Gauge className="h-4 w-4 text-gray-500" />}
+                  />
+                  <Metric
+                    label="Tide Level"
+                    value={`${realTimeData.tideLevel.toFixed(1)} m`}
+                    icon={<Waves className="h-4 w-4 text-indigo-500" />}
+                  />
+                  <div className="col-span-2 text-sm text-gray-500">
+                    Last update:{" "}
+                    <span className="text-gray-700">
+                      {realTimeData.lastUpdate
+                        ? new Date(realTimeData.lastUpdate).toLocaleTimeString()
+                        : "—"}
+                    </span>
                   </div>
-
-                  {/* Precipitation */}
-                  <div className="border-t border-gray-100 pt-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-600">
-                        Current Precipitation
-                      </span>
-                      <CloudRain className="h-4 w-4 text-blue-400" />
-                    </div>
-                    <div className="text-3xl font-semibold text-gray-800 mb-2">
-                      {realTimeData.precipitation} mm
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div>
-                        <span className="text-gray-500">Hourly Rain:</span>
-                        <span className="ml-1 text-gray-700">
-                          {realTimeData.precipitation > 0 ? "Yes" : "No"}
-                        </span>
-                      </div>
-                      <div className="col-span-2">
-                        <span className="text-gray-500">Last update:</span>
-                        <span className="ml-1 text-gray-700">
-                          {realTimeData.lastUpdate
-                            ? new Date(realTimeData.lastUpdate).toLocaleTimeString()
-                            : "—"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </>
+                </div>
               )}
             </div>
 
@@ -315,43 +303,40 @@ export default function Dashboard() {
                 <Activity className="h-4 w-4 text-blue-600" />
               </div>
               <div className="space-y-3">
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm text-gray-600">
-                      Storm Surge Risk
-                    </span>
-                    <span className="text-sm font-medium text-gray-800">
-                      65%
-                    </span>
-                  </div>
-                  <div className="w-full bg-white rounded-full h-2">
-                    <div
-                      className="bg-blue-500 h-2 rounded-full"
-                      style={{ width: "65%" }}
-                    ></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm text-gray-600">
-                      Erosion Probability
-                    </span>
-                    <span className="text-sm font-medium text-gray-800">
-                      25%
-                    </span>
-                  </div>
-                  <div className="w-full bg-white rounded-full h-2">
-                    <div
-                      className="bg-green-500 h-2 rounded-full"
-                      style={{ width: "25%" }}
-                    ></div>
-                  </div>
-                </div>
+                <Prediction label="Storm Surge Risk" percent={65} color="bg-blue-500" />
+                <Prediction label="Erosion Probability" percent={25} color="bg-green-500" />
               </div>
             </div>
           </div>
         </div>
-      </div>  
+      </div>
+    </div>
+  );
+}
+
+// Reusable Metric Card
+function Metric({ label, value, icon }) {
+  return (
+    <div className="p-3 border rounded-lg flex flex-col items-start">
+      <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+        {icon} {label}
+      </div>
+      <div className="text-lg font-semibold text-gray-800">{value}</div>
+    </div>
+  );
+}
+
+// Reusable Prediction Bar
+function Prediction({ label, percent, color }) {
+  return (
+    <div>
+      <div className="flex justify-between mb-1">
+        <span className="text-sm text-gray-600">{label}</span>
+        <span className="text-sm font-medium text-gray-800">{percent}%</span>
+      </div>
+      <div className="w-full bg-white rounded-full h-2">
+        <div className={`${color} h-2 rounded-full`} style={{ width: `${percent}%` }} />
+      </div>
     </div>
   );
 }
