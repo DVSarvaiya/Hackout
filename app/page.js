@@ -42,7 +42,7 @@ export default function Dashboard() {
         ...prev,
         seaLevel: prev.seaLevel + (Math.random() - 0.5) * 0.05,
         windSpeed: Math.max(
-          20,
+          10,
           Math.min(80, prev.windSpeed + (Math.random() - 0.5) * 3)
         ),
         lastUpdate: new Date(),
@@ -167,8 +167,6 @@ export default function Dashboard() {
                   </h3>
                   <div className="space-y-2">
                     {[
-                      { id: "all", label: "All Layers" },
-                      { id: "weather", label: "Weather" },
                       { id: "currents", label: "Currents" },
                       { id: "sensors", label: "Sensors" },
                       { id: "zones", label: "Alert Zones" },
@@ -239,7 +237,7 @@ export default function Dashboard() {
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl font-semibold text-gray-800">
-                    {realTimeData.windSpeed} km/h
+                    {realTimeData.windSpeed.toFixed(2)} km/h
                   </span>
                   <span className="text-sm text-gray-500">NE</span>
                 </div>

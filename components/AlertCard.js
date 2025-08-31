@@ -18,19 +18,19 @@ export default function AlertCard({ alert, onAcknowledge, onShare, onViewDetails
   const getPriorityBadge = (priority) => {
     switch (priority) {
       case 'high':
-        return 'bg-danger text-white'
+        return 'bg-danger text-black'
       case 'medium':
-        return 'bg-warning text-white'
+        return 'bg-warning text-black'
       case 'low':
-        return 'bg-info text-white'
+        return 'bg-info text-black'
       default:
-        return 'bg-gray-500 text-white'
+        return 'bg-gray-500 text-black'
     }
   }
 
   return (
     <div className={`rounded-lg border-2 p-4 transition-all hover:shadow-lg ${getPriorityClasses(alert.priority)}`}>
-      <div className="flex justify-between items-start mb-3">
+      <div className="flex justify-between items-start mb-3 ">
         <div className="flex items-center space-x-3">
           <span className={`px-2 py-1 rounded text-xs font-semibold ${getPriorityBadge(alert.priority)}`}>
             {alert.priority.toUpperCase()} PRIORITY
