@@ -18,6 +18,17 @@ import {
   Gauge,
   Waves,
 } from "lucide-react";
+import dynamic from "next/dynamic";
+
+// Dynamic import for MapVisualization to avoid SSR issues with Leaflet
+const MapVisualization = dynamic(() => import("@/components/MapVisualization"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-full w-full rounded-lg bg-gray-200 flex items-center justify-center text-gray-500">
+      Loading map...
+    </div>
+  ),
+});
 
 export default function Dashboard() {
   const [coords, setCoords] = useState({ lat: 40.7128, lon: -74.006 }); // default: NYC
@@ -38,6 +49,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedLayer, setSelectedLayer] = useState("sensors");
+  const [selectedAlert, setSelectedAlert] = useState(null);
 
   // 🛰 Get user location
   useEffect(() => {
@@ -203,6 +215,8 @@ export default function Dashboard() {
                       { id: "currents", label: "Currents" },
                       { id: "sensors", label: "Sensors" },
                       { id: "zones", label: "Alert Zones" },
+                      { id: "weather", label: "Weather" },
+                      { id: "all", label: "All Layers" },
                     ].map((layer) => (
                       <label
                         key={layer.id}
@@ -226,12 +240,11 @@ export default function Dashboard() {
 
                 {/* Map area */}
                 <div className="flex-1 relative p-2">
-                  <div className="h-full w-full rounded-lg bg-gray-200 flex items-center justify-center text-gray-500">
-                    Live Map Placeholder <br />
-                    <span className="text-xs">
-                      ({coords.lat.toFixed(2)}, {coords.lon.toFixed(2)})
-                    </span>
-                  </div>
+                  <MapVisualization
+                    selectedAlert={selectedAlert}
+                    selectedLayer={selectedLayer}
+                    coords={coords}
+                  />
                 </div>
               </div>
             </div>
