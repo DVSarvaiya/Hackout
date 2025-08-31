@@ -194,8 +194,6 @@ export default function Dashboard() {
                   </h3>
                   <div className="space-y-2">
                     {[
-                      { id: "all", label: "All Layers" },
-                      { id: "weather", label: "Weather" },
                       { id: "currents", label: "Currents" },
                       { id: "sensors", label: "Sensors" },
                       { id: "zones", label: "Alert Zones" },

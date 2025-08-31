@@ -34,8 +34,8 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo and Brand */}
           <div className="flex items-center animate-fadeIn">
-            <AlertTriangle className="h-8 w-8 text-blue-600 mr-3" />
-            <span className="text-xl font-bold text-gray-800">Coastal Alert System</span>
+          <img src="image.png" width={50} height={50}/>
+            <span className="text-xl font-bold text-gray-800">Blue Alert</span>
           </div>
 
           {/* Search Bar - Hidden on Mobile */}
@@ -54,8 +54,6 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             {/* System Status Indicator */}
             <div className="hidden sm:flex items-center animate-fadeIn animation-delay-200">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
-              <span className="text-sm text-gray-600">System Online</span>
             </div>
 
             {/* Notifications */}
